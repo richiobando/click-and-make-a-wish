@@ -1,9 +1,12 @@
-import './App.css'
+// import './App.css'
+import React from "react";
 import ShootingStars from './ShootingStars'
 function App() {
-
   return (
-      <ShootingStars/>
+<div >
+  <ShootingStars bg={ '#000f3d'} />
+</div>
+
   )
 }
 

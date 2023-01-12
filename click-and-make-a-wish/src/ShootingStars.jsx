@@ -1,6 +1,8 @@
 import React, { useEffect, useRef } from 'react';
-function shootingStars(element) {
-  const canvas = element;
+import useDetectScroll from './useDetectScroll';
+import useWheel from './useWheel';
+
+function shootingStars(canvas, bg,wheelMoves) {
   const ctx = canvas.getContext('2d');
 
   const innerWidth = window.innerWidth;
@@ -40,8 +42,15 @@ function shootingStars(element) {
 
     this.z++;
     starRadius = radius * Math.abs(Math.sin(this.z / 50));
-    // if()
-
+    draw();
+  }
+  function updateShooting() {
+    starX = this.x;
+    starY = this.y;
+    starRadius = 2;
+    this.x += -5 * this?.director.x;
+    this.y += -5 * this?.director.y;
+    radius = 2;
     draw();
   }
 
@@ -75,8 +84,8 @@ function shootingStars(element) {
     const directorY = Math.sin(Math.random() * TWO_PI);
     return { x: directorX, y: directorY };
   }
-  // begin a shootin star
-  element.addEventListener('click', (e) => {
+  // shoot a shooting star
+  canvas.addEventListener('click', (e) => {
     const x = e.offsetX;
     const y = e.offsetY;
     const starObj = {
@@ -90,36 +99,36 @@ function shootingStars(element) {
       update: update,
       shooting: true,
       director: directors(),
+      updateShooting,
     };
     stars[starsIndex] = starObj;
     starsIndex++;
     starObj.id = starsIndex;
   });
 
-  element.addEventListener('wheel', (e) => {
-    mouse.x = e.deltaX;
-    mouse.y = e.deltaY;
-    y: if (e.deltaY > 0) {
+  window.addEventListener('wheel', (e) => {
+    mouse.x = wheelMoves.deltaX;
+    mouse.y = wheelMoves.deltaY;
+
+    if (wheelMoves.deltaY > 0) {
       starX_dir += 2;
     }
-    if (e.deltaY < 0) {
+    if (wheelMoves.deltaY < 0) {
       starX_dir -= 2;
     }
   });
+
   canvas.width = innerWidth;
   canvas.height = innerHeight;
 
   function animate() {
     requestAnimationFrame(animate);
-    ctx.fillStyle = '#000f3d';
+    ctx.fillStyle = bg;
     ctx.fillRect(0, 0, innerWidth, innerHeight);
     for (let i in stars) {
       stars[i].update();
       if (stars[i].shooting) {
-        stars[i].x += -5 * stars[i]?.director.x;
-        stars[i].y += -5 * stars[i]?.director.y;
-        // stars[i].radius =5
-        // stars[i].z =5
+        stars[i].updateShooting();
       }
     }
   }
@@ -127,11 +136,22 @@ function shootingStars(element) {
 }
 
 export default function ShootingStars(props) {
+  const { bg } = props
   const canvasRef = useRef(null);
+  // const [scrollDir] = useDetectScroll({})
+  const [wheelMoves] = useWheel({});
+
   useEffect(() => {
     const canvas = canvasRef.current;
-    shootingStars(canvas);
+    shootingStars(canvas,bg ,wheelMoves);
   }, []);
+  // const onScroll = (e) => {
+  //   // setActive(!active)
+  // }
 
-  return <canvas ref={canvasRef} {...props} />;
+  return (
+    <div>
+      <canvas ref={canvasRef} />
+    </div>
+  );
 }

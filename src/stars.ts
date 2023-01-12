@@ -14,7 +14,7 @@ interface Coordinates {
   x: number | null;
   y: number | null;
 }
-//TODO if star is shootin don change z
+// element = document.querySelector<HTMLCanvasElement>('#stars')
 export function shootingStars(element: HTMLCanvasElement) {
   const canvas = element;
   const ctx = canvas.getContext('2d');
@@ -113,7 +113,7 @@ export function shootingStars(element: HTMLCanvasElement) {
     starsIndex++;
     starObj.id = starsIndex;
   });
-
+  // element = document.querySelector<HTMLCanvasElement>('#stars')
   element.addEventListener('wheel', (e) => {
     mouse.x = e.deltaX;
     mouse.y = e.deltaY;
